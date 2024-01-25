@@ -1,3 +1,6 @@
 from django.shortcuts import render
 
-# Create your views here.
+
+def dash(request):
+    template = 'dashboard/dash.html'
+    return render(request, template)

@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+<a href="{% url 'admin:index' %}">{% translate 'Home' %}</a>
+&rsaquo; {% translate 'Password reset' %}
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="container py-3">
+    <div class="card  text-center col-md-6 m-auto">
+        <div class="card-body">
+            <p>{% translate "Your password has been set.  You may go ahead and log in now." %}</p>
+            <p><a href="{% url 'users:login' %}">{% translate 'Log in' %}</a></p>
+        </div>
+    </div>
+</div>
+{% endblock %}
