@@ -39,10 +39,11 @@ class User(AbstractUser):
         max_length=150,
     )
     photo = models.ImageField(
-        upload_to='users/%Y/%m/%d/',
+        upload_to='users/',
         blank=True,
         null=True,
-        verbose_name='Photo'
+        verbose_name='Photo',
+        default='users/logo.jpg'
     )
     date_birth = models.DateField(
         blank=True,

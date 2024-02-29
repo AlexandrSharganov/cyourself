@@ -29,7 +29,7 @@ def login_user(request):
 
             if user is not None:
                 login(request, user)
-                return redirect('dashboard:dash')
+                return redirect('/')
             else:
                 form.add_error(None, 'Invalid email or password.')
     else:
@@ -37,22 +37,6 @@ def login_user(request):
 
     return render(request, template_name, {'form': form})
 
-
 def custom_logout(request):
     logout(request)
-    return redirect('dashboard:dash')
-
-# def password_reset(request):
-#     template = 'users/password_reset.html'
-#     if request.method == 'POST':
-#         form = PassResetForm(data=request.POST)
-#         if form.is_valid():
-#             email = form.cleaned_data.get('email')
-#             return redirect('users:link_sended')
-#         return render(request, template, {'form': form})
-#     form = PassResetForm()
-#     return render(request, template, {'form': form})
-
-# def link_sended(request):
-#     template = 'users/link_sended.html'
-#     return render(request, template)
+    return redirect('/')

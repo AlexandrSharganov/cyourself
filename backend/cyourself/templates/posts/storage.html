@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% load thumbnail %}
+{% load user_filters %}
+
+{% block content %}
+
+<div class="container p-2 m-auto col-md-10 d-flex flex-column">
+  {% comment %} <div class="card">  
+    <div class="card-header text-center d-flex justify-content-between align-items-center">
+      <i><h5>My resources:</h5></i>
+      <div class="">
+        <a href="{% url 'posts:post_create' %}" class="btn btn-primary">
+          Add
+        </a>
+      </div>
+    </div>
+  </div> {% endcomment %}
+  {% for post in posts %}
+    {% include "includes/mini_card.html" %}
+  {% endfor %}  
+</div>
+{% endblock content %}

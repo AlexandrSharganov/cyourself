@@ -50,7 +50,9 @@ INSTALLED_APPS = [
     'articles.apps.ArticlesConfig',
     'dashboard.apps.DashboardConfig',
     'personal.apps.PersonalConfig',
+    'posts.apps.PostsConfig',
     'core.apps.CoreConfig',
+    'sorl.thumbnail',
 ]
 
 MIDDLEWARE = [
@@ -141,6 +143,9 @@ STATIC_URL = "static/"
 
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media') 
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
@@ -149,3 +154,7 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 AUTH_USER_MODEL = 'users.User'
 
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+
+START_PAGE = 'posts:news'
+
+LOGIN_URL = 'users:login'

@@ -26,9 +26,20 @@ class Profile(models.Model):
     def __str__(self):
         return f'{self.id}'
 
+
+class Storage(models.Model):
+    user = models.OneToOneField(
+        User,
+        related_name='storage',
+        verbose_name='user',
+        on_delete=models.CASCADE
+    )
+    
+
 @receiver(post_save, sender=User)
-def save_or_create_create(sender, instance, created, **kwargs):
+def save_or_create(sender, instance, created, **kwargs):
     """Создание профайла вместе с пользователем."""
     if created:
-        title = f'{instance.username}`s blog'
+        # title = f'{instance.username}`s blog'
         Profile.objects.create(author=instance)
+        Storage.objects.create(user=instance)

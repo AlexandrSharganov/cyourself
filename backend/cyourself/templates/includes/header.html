@@ -3,7 +3,7 @@
   class="navbar navbar-expand-md navbar-dark bg-success sticky-top justify-content-between"
 >
   <div class="container d-flex flex-md-row justify-content-around">
-    <a class="navbar-brand" href="{% url 'dashboard:dash' %}"><i>CYourself</i></a>
+    <a class="navbar-brand" href="{% url 'posts:news' %}"><i>CYourself</i></a>
     <button
       class="navbar-toggler"
       type="button"
@@ -15,26 +15,31 @@
     >
       <span class="navbar-toggler-icon"></span>
     </button>
-
+    {% with request.resolver_match.view_name as view_name %}
     <div class="collapse navbar-collapse" id="navbarColor01">
       <ul class="navbar-nav m-auto">
-        <li class="pr-3 nav-item">
-          <a class="nav-link" href="#">Storage</a>
-        </li>
-        <li class="pr-3 nav-item">
-          <a class="nav-link" href="#">News</a>
+        {% comment %} {% if post_detail %}
+          <li class="pr-3 nav-item {% if view_name  == 'posts:storage' %}active{% endif %}">
+            <a class="nav-link text-alert" href="{{ request.META.HTTP_REFERER }}">Back to prev page</a>
+          </li>
+        {% endif %} {% endcomment %}
+        <li class="pr-3 nav-item {% if view_name  == 'posts:news' %}active{% endif %}">
+          <a class="nav-link" href="{% url 'posts:news' %}">News</a>
         </li>
         {% if user.is_authenticated  %}
-            <li class="pr-3 nav-item">
-              <a class="nav-link" href="#">Profile</a>
+            <li class="pr-3 nav-item {% if view_name  == 'posts:storage' %}active{% endif %}">
+              <a class="nav-link" href="{% url 'posts:storage' %}">Storage</a>
             </li>
-            <li class="pr-3 nav-item active">
+            <li class="pr-3 nav-item {% if view_name  == 'personal:personal' %}active{% endif %}">
+              <a class="nav-link" href="{% url 'personal:personal' user.pk %}">Profile</a>
+            </li>
+            {% comment %} <li class="pr-3 nav-item">
               <a class="nav-link" href="#"
                 >Dashboard<span class="sr-only">(current)</span></a
               >
-            </li>
+            </li> {% endcomment %}
             <li class="pr-3 nav-item">
-              <a class="nav-link" href="#">{{ user.email }}</a>
+              <span class="nav-link disabled text-white" href="#">{{ user.first_name }} {{ user.last_name }}</span>
             </li>
             <li class="pr-3 nav-item">
               <a class="nav-link" href="{% url 'users:logout' %}">Logout</a>
@@ -43,12 +48,12 @@
       </ul>
         {% if user.is_authenticated is not True %}
           <ul class="navbar-nav ml-auto">
-            <li class="pr-3 nav-item active">
+            <li class="pr-3 nav-item {% if view_name  == 'users:login' %}active{% endif %}">
               <a class="nav-link" href="{% url 'users:login' %}"
                 >Login<span class="sr-only">(current)</span></a
               >
             </li>
-            <li class="pr-3 nav-item">
+            <li class="pr-3 nav-item {% if view_name  == 'users:registration' %}active{% endif %}">
               <a class="nav-link" href="{% url 'users:registration' %}">Registration</a>
             </li>
           </ul>
@@ -65,5 +70,6 @@
           </button>
         </form> {% endcomment %}
     </div>
+    {% endwith %}
   </div>
 </nav>
