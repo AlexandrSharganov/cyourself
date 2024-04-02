@@ -19,7 +19,7 @@
             {% endthumbnail %}
           </div>
           <div class="text-center">
-            {{ post.author.first_name }} {{ post.author.last_name }}
+            <a href="{% url 'personal:personal' post.author.id %}">{{ post.author.first_name }} {{ post.author.last_name }}</a>
           </div>
         </div>
         <div class="d-flex justity-content-center align-items-center">

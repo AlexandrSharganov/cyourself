@@ -1,8 +1,10 @@
 from django.shortcuts import render, redirect
 from django.shortcuts import get_object_or_404, get_list_or_404
+from django.contrib.auth.decorators import login_required
 
 from users.models import User
 from posts.models import Post
+from personal.models import Follow
 
 from .forms import ProfileEditForm
 from .models import Profile
@@ -10,12 +12,27 @@ from .models import Profile
 
 def personal_page(request, pk):
     template = 'personal/personal.html'
-    user = get_object_or_404(User, pk=pk)
-    posts = Post.objects.filter(author=user).order_by('-pub_date')
-    context = {
-        'user': user,
-        'posts': posts
-    }
+    person = get_object_or_404(User, pk=pk)
+    posts = Post.objects.filter(author=person).prefetch_related('author', 'tagpost_set__tag').order_by('-pub_date')
+    context = {}
+    if request.user.is_authenticated:
+        list_posts_in_storage = Post.objects.filter(poststorage__storage=request.user.storage)
+        follows = Follow.objects.filter(follower=request.user.profile, following=person.profile).exists()
+        context.update(
+            {
+                'follows': follows,
+                'user': request.user
+            }
+        )
+    else:
+        list_posts_in_storage = None
+    context.update(
+        {
+            'person': person,
+            'posts': posts,
+            'list_posts_in_storage': list_posts_in_storage,
+        }
+    )
     return render(request, template, context)
 
 def edit_profile(request, pk):
@@ -49,3 +66,33 @@ def edit_profile(request, pk):
     }
     )
     return render(request, template, {'form': form})
+
+@login_required
+def create_follow(request, pk):
+    author = get_object_or_404(User, pk=pk)
+    user = request.user
+    if user != author:
+        Follow.objects.get_or_create(
+            follower=user.profile,
+            following=author.profile
+        )
+    return redirect('personal:personal', pk)
+    
+@login_required
+def delete_follow(request, pk):
+    author = get_object_or_404(User, pk=pk)
+    user = request.user
+    Follow.objects.filter(
+        follower=user.profile,
+        following=author.profile
+    ).delete()
+    return redirect('personal:personal', pk)
+
+@login_required
+def list_follow(request):
+    template = 'personal/follow.html'
+    followings = User.objects.filter(profile__following__follower=request.user.profile)
+    context = {
+        'followings': followings,
+    }
+    return render(request, template, context)

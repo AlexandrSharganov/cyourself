@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404, get_list_or_404
 from django.contrib.auth.decorators import login_required
+from django.core.paginator import Paginator
 
 from personal.models import Storage
 
@@ -107,25 +108,32 @@ def comments_create(request, pk):
         comment.author = request.user
         comment.post = post
         comment.save()
-    return redirect('posts:post_detail', pk)
-        
+    return redirect('posts:post_detail', pk) 
 
 def news(request):
-    posts = Post.objects.all().order_by('-pub_date')
+    posts = Post.objects.all().prefetch_related('author', 'tagpost_set__tag').order_by('-pub_date')
+    paginator = Paginator(posts, 10)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    if request.user.is_authenticated:
+        list_posts_in_storage = Post.objects.filter(poststorage__storage=request.user.storage)
+    else:
+        list_posts_in_storage = None
     template = 'posts/storage.html'
     context = {
-        'posts': posts
+        'page_obj': page_obj,
+        'list_posts_in_storage': list_posts_in_storage
     }
     return render(request, template, context)
 
 @login_required
 def storage(request):
     storage = get_object_or_404(Storage, user=request.user)
-    posts = Post.objects.filter(poststorage__storage=storage).order_by('poststorage__-add_date')
+    posts = Post.objects.filter(poststorage__storage=storage).select_related('author').order_by('poststorage__-add_date')
     print(posts)
     template = 'posts/storage.html'
     context = {
-        'posts': posts
+        'page_obj': posts
     }
     return render(request, template, context)
 
@@ -133,9 +141,12 @@ def storage(request):
 def add_to_storage(request, pk):
     storage = get_object_or_404(Storage, user=request.user)
     post = get_object_or_404(Post, pk=pk)
-    # storage = Storage.objects.get(user=request.user)
-    # post = Post.objects.get(pk=pk)
-    PostStorage.objects.create(storage=storage, post=post)
+    try:
+        PostStorage.objects.create(storage=storage, post=post)
+    except:
+        template = 'posts/storage.html'
+        context = {'alert': True}
+        return render(request, template, context)
     return redirect('posts:storage')
 
 @login_required

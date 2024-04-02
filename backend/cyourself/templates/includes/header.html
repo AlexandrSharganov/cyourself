@@ -30,8 +30,11 @@
             <li class="pr-3 nav-item {% if view_name  == 'posts:storage' %}active{% endif %}">
               <a class="nav-link" href="{% url 'posts:storage' %}">Storage</a>
             </li>
-            <li class="pr-3 nav-item {% if view_name  == 'personal:personal' %}active{% endif %}">
-              <a class="nav-link" href="{% url 'personal:personal' user.pk %}">Profile</a>
+            <li class="pr-3 nav-item {% if view_name  == 'personal:list_follow' %}active{% endif %}">
+              <a class="nav-link" href="{% url 'personal:list_follow' %}">Subscriptions</a>
+            </li>
+            <li class="pr-3 nav-item {% if view_name  == 'personal:personal' and request.user.pk == user.pk %}active{% endif %}">
+              <a class="nav-link" href="{% url 'personal:personal' request.user.pk %}">Profile</a>
             </li>
             {% comment %} <li class="pr-3 nav-item">
               <a class="nav-link" href="#"
@@ -39,7 +42,7 @@
               >
             </li> {% endcomment %}
             <li class="pr-3 nav-item">
-              <span class="nav-link disabled text-white" href="#">{{ user.first_name }} {{ user.last_name }}</span>
+              <span class="nav-link disabled text-white" href="#">{{ request.user.first_name }} {{ request.user.last_name }}</span>
             </li>
             <li class="pr-3 nav-item">
               <a class="nav-link" href="{% url 'users:logout' %}">Logout</a>

@@ -14,7 +14,7 @@ urlpatterns = [
     path('dashboard.', include('dashboard.urls', namespace='dashboard')),
     path('personal/', include('personal.urls', namespace='personal')),
     path('posts/', include('posts.urls', namespace='posts')),
-    # path("__debug__/", include("debug_toolbar.urls")),
+    path("__debug__/", include("debug_toolbar.urls")),
 ]
 
 if settings.DEBUG:

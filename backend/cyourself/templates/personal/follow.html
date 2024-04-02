@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% load thumbnail %}
+{% load user_filters %}
+
+{% block content %}
+<div class="container p-2 m-auto col-md-10 d-flex flex-column">
+  {% comment %} <div class="card"> {% endcomment %}
+  {% for following in followings %}
+    {% include "includes/follow_card.html" %}
+  {% endfor %}  
+{% comment %} </div> {% endcomment %}
+{% endblock content %}

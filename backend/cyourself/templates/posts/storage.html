@@ -15,8 +15,14 @@
       </div>
     </div>
   </div> {% endcomment %}
-  {% for post in posts %}
+  {% for post in page_obj %}
     {% include "includes/mini_card.html" %}
   {% endfor %}  
+  {% include 'includes/paginator.html' %}
 </div>
+{% if alert %}
+  <script>
+    alert("This article already in your storage!");
+  </script>
+{% endif %}
 {% endblock content %}

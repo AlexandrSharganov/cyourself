@@ -1,0 +1,19 @@
+{% load thumbnail %}
+
+<div class="card m-2">
+  <div class="card-body">
+    <div class="d-flex flex-row justify-content-center align-items-center">
+      <div class="d-md-flex text-center d-none d-md-block">
+        {% thumbnail following.photo "100x100" crop="center" as im %}
+          <img class="m-auto img-fluid" src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}" style="border-radius:10%;">
+        {% endthumbnail %}
+      </div>
+      <div class="text-center m-2">
+        <a href="{% url 'personal:personal' following.id %}"><h4>{{ following.first_name }} {{ following.last_name }}</h4></a>
+      </div>
+    </div>
+    <div class="d-md-flex text-center d-none d-md-block text-center m-2">
+      <p>Profile description: {{ following.profile.description }}</p>
+    </div>
+  </div>
+</div>

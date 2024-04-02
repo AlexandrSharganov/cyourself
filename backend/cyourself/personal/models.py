@@ -1,6 +1,7 @@
 from django.db import models
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from django.db.models import Q, F
 
 from users.models import User
 
@@ -34,6 +35,31 @@ class Storage(models.Model):
         verbose_name='user',
         on_delete=models.CASCADE
     )
+
+
+class Follow(models.Model):
+    follower = models.ForeignKey(
+        Profile,
+        on_delete=models.CASCADE,
+        related_name='subscriber'
+    )
+    following = models.ForeignKey(
+        Profile,
+        on_delete=models.CASCADE,
+        related_name='following'
+    )
+    
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=['follower','following'],
+                name='one_time_follow'
+            ),
+            models.CheckConstraint(
+                check=~Q(follower=F('following')),
+                name='no_self_subscription'
+            )
+        ]
     
 
 @receiver(post_save, sender=User)

@@ -1,0 +1,37 @@
+version: '3.3'
+
+services:
+    db:
+        image: postgres:13.1-alpine
+        restart: unless-stopped
+        volumes:
+            - postgres_data:/var/lib/postgresql/data
+        env_file:
+            - ./.env
+    django_server:
+        restart: unless-stopped
+        build:
+            context: .
+            dockerfile: backend/cyourself/Dockerfile
+        entrypoint: /docker/backend/serverentrypoint.sh
+        volumes:
+            - static_volume:/backend/cyourself/static
+            - media_volume:/backend/cyourself/media
+        expose:
+            - 8000
+        depends_on:
+            - db
+    nginx:
+        restart: always
+        image: nginx:1.21.3-alpine
+        ports:
+            - 80:80
+        volumes:
+            - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf
+            - static_volume:/cyourself/static
+            - media_volume:/cyourself/media
+
+volumes:
+    static_volume:
+    media_volume:
+    postgres_data:

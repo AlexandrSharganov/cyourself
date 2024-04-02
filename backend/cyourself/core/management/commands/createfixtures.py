@@ -10,6 +10,14 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         users = mixer.cycle(10).blend('users.user')
+        superuser = mixer.blend(
+            'users.user',
+            email='admin@admin.admin',
+            is_superuser=True,
+            is_staff=True
+        )
+        superuser.set_password('admin')
+        superuser.save()
         tags = mixer.cycle(100).blend('posts.tag')
         posts = mixer.cycle(100).blend('posts.post', author=mixer.SELECT)
         for post in posts:
