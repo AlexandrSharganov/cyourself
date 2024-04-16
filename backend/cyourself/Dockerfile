@@ -21,3 +21,4 @@ WORKDIR /docker/backend
 # RUN gunicorn backend.cyourself.cyourself.wsgi --bind 0.0.0.0:8000 --workers 4 --threads 4
 # 
 RUN chmod +x serverentrypoint.sh
+RUN chmod +x worker-entrypoint.sh

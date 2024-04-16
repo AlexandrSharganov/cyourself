@@ -1,20 +1,23 @@
 from django import forms
 from django.contrib.auth.password_validation import validate_password
+from django.core.cache import cache
 
 from users.models import User
 
 
-class UserCreationForm(forms.ModelForm):
+class UserCreationForm(forms.Form):
     """A form for creating new users."""
+    
+    email = forms.EmailField()
     password1 = forms.CharField(
         label='Password',
         widget=forms.PasswordInput,
     )
     password2 = forms.CharField(label='Password confirmation', widget=forms.PasswordInput)
 
-    class Meta:
-        model = User
-        fields = ('email',)
+    # class Meta:
+    #     model = User
+    #     fields = ('email',)
 
 
     def clean_password2(self):
@@ -26,13 +29,39 @@ class UserCreationForm(forms.ModelForm):
             raise forms.ValidationError("Passwords aren't match")
         return password1
 
-    def save(self, commit=True):
-        # Save the provided password in hashed format
-        user = super().save(commit=False)
-        user.set_password(self.cleaned_data["password1"])
-        if commit:
-            user.save()
-        return user
+    # def save(self, commit=True):
+    #     # Save the provided password in hashed format
+    #     user = super().save(commit=False)
+    #     user.set_password(self.cleaned_data["password1"])
+    #     if commit:
+    #         user.save()
+    #     return user
+
+
+class OTPForm(forms.Form):
+    
+    
+    
+    opt_field = forms.CharField(
+        label='One Time Password',
+        help_text='6-digits code have been sended to your email. Please enter it.'
+    )
+    
+    def __init__(self, *args, **kwargs):
+        # Передача объекта запроса в качестве аргумента
+        self.request = kwargs.pop('request', None)
+        super(OTPForm, self).__init__(*args, **kwargs)
+    
+    def clean_opt_field(self):
+        # Check that the two otp_code match
+        opt_field = self.cleaned_data.get('opt_field')
+        if self.request:
+            session_key = self.request.session.session_key
+            cache_otp = cache.get(session_key)
+            print(cache_otp)
+        if opt_field != cache_otp['otp_code']:
+            raise forms.ValidationError("Code isn't correct.")
+        return opt_field
 
 
 class LoginForm(forms.Form):

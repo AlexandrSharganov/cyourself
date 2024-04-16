@@ -2,6 +2,7 @@
 
 cd /backend/cyourself
 
+python manage.py makemigrations
 python manage.py migrate
 python manage.py createfixtures
 python manage.py collectstatic --noinput

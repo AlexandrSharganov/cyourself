@@ -7,13 +7,14 @@ from django.contrib.auth.views import (
    PasswordResetConfirmView,
 )
 
-from .views import register_user, custom_logout, login_user
+from .views import register_user, custom_logout, login_user, confirm_signup_by_otp
 
 
 app_name = 'users'
 
 urlpatterns = [
     path('registration/', register_user, name='registration'),
+    path('confirm_signup_by_otp/', confirm_signup_by_otp, name='confirm_signup_by_otp'),
     path('login/', login_user, name='login'),
     path('logout/', custom_logout, name='logout'),
     path(

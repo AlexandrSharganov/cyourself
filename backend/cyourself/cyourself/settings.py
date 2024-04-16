@@ -12,6 +12,13 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 import os
 from pathlib import Path
 
+from dotenv import load_dotenv
+
+PATH_TO_DOTENV = Path.cwd().parent.parent.joinpath(".env")
+# print(PATH_TO_DOTENV)
+load_dotenv(dotenv_path=PATH_TO_DOTENV)
+SECRET_KEY = os.getenv('SECRET_KEY')
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -20,7 +27,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-6z^$^=vwy0+87!d0d2eosg5n@-nhl+09&tt*e+szgo7yy&%c6t"
+
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -53,6 +60,7 @@ INSTALLED_APPS = [
     'posts.apps.PostsConfig',
     'core.apps.CoreConfig',
     'sorl.thumbnail',
+    'celery',
 ]
 
 MIDDLEWARE = [
@@ -88,27 +96,48 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "cyourself.wsgi.application"
 
+EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+
 
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
-DATABASES = {
+# CACHES = {
+#     "default": {
+#         "BACKEND": "django.core.cache.backends.redis.RedisCache",
+#         # "LOCATION": os.getenv("REDIS_URL", "redis://redis:6379/"),
+#         "LOCATION": "redis://redis:6379/",
+#         "TIMEOUT": 60 * 15,
+#     }
+# }
+
+
+CACHES = {
     "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+        "BACKEND": "django.core.cache.backends.redis.RedisCache",
+        "LOCATION": os.getenv("REDIS_URL", "redis://redis:6379/"),
+        "TIMEOUT": 60 * 15,
     }
 }
 
+
 # DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql',
-#         'NAME': 'postgres',
-#         'USER': 'postgres',
-#         'PASSWORD': 'postgres',
-#         'HOST': 'db',
-#         'PORT': '5432',
+#     "default": {
+#         "ENGINE": "django.db.backends.sqlite3",
+#         "NAME": BASE_DIR / "db.sqlite3",
 #     }
 # }
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'postgres',
+        'USER': 'postgres',
+        'PASSWORD': 'postgres',
+        'HOST': 'db',
+        'PORT': '5432',
+    }
+}
 
 
 # Password validation
@@ -186,3 +215,10 @@ LOGIN_URL = 'users:login'
 #         },
 #     },
 # }
+
+CELERY_BROKER_URL = os.getenv("BROKER_URL", "redis://redis:6379/")
+CELERY_RESULT_BACKEND = os.getenv("RESULT_BACKEND", "redis://redis:6379/")
+
+# CELERY_ACCEPT_CONTENT = {'application/json'}
+# CELERY_RESULT_SERIALIZER = 'json'
+# CELERY_TASK_SERIALIZER = 'json'
